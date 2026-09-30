@@ -37,10 +37,18 @@ queryClient.getMutationCache().subscribe(event => {
   }
 });
 
+const getApiEndpoint = () => {
+  const customApiUrl = import.meta.env.VITE_API_URL;
+  if (customApiUrl && typeof customApiUrl === "string" && customApiUrl.trim()) {
+    return `${customApiUrl.trim().replace(/\/+$/, "")}/api/trpc`;
+  }
+  return "/api/trpc";
+};
+
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: "/api/trpc",
+      url: getApiEndpoint(),
       transformer: superjson,
       headers() {
         // Preview auto-login fallback: when the browser blocks iframe cookies

@@ -97,6 +97,11 @@ function vitePluginDebugCollector(): Plugin {
     },
 
     configureServer(server: ViteDevServer) {
+      server.middlewares.use("/__debug__/debug-collector.js", (_req, res) => {
+        res.writeHead(200, { "Content-Type": "application/javascript" });
+        res.end("// debug collector");
+      });
+
       // POST /__debug__/logs: Browser sends logs (written directly to files)
       server.middlewares.use("/__debug__/logs", (req, res, next) => {
         if (req.method !== "POST") {

@@ -19,13 +19,20 @@ const ALLOWED_ORIGINS = [
   ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
 ];
 
+function isOriginAllowed(origin: string): boolean {
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  if (origin.endsWith(".vercel.app") && origin.startsWith("https://")) return true;
+  if (process.env.NODE_ENV !== "production") return true;
+  return false;
+}
+
 function applyCors(
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
 ) {
   const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+  if (origin && isOriginAllowed(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
   res.setHeader("Access-Control-Allow-Credentials", "true");

@@ -4,7 +4,7 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: npm install -g pnpm && pnpm install && pnpm run build
+    buildCommand: pnpm install && pnpm run build:server
     startCommand: node dist/index.js
     healthCheckPath: /api/health
     envVars:
@@ -12,6 +12,10 @@ services:
         value: production
       - key: PORT
         value: 10000
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: FRONTEND_URL
+        sync: false        # Set this to your Vercel deployment URL (e.g. https://your-project.vercel.app)
       - key: OPENAI_API_KEY
         sync: false        # Set this in Render dashboard
       - key: GEMINI_API_KEY
