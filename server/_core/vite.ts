@@ -61,8 +61,19 @@ export function serveStatic(app: Express) {
 
   app.use(express.static(distPath));
 
-  // SPA fallback — send index.html for any unmatched route
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  // SPA fallback — send index.html if frontend is bundled, or return API status for standalone backend
+  app.use("*", (req, res) => {
+    const indexPath = path.resolve(distPath, "index.html");
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(200).json({
+        service: "Morphix API",
+        status: "online",
+        message: "Morphix backend is running. Frontend is deployed on Vercel.",
+        health: "/api/health",
+        timestamp: new Date().toISOString(),
+      });
+    }
   });
 }
